@@ -1,0 +1,30 @@
+#ifndef PARTICIPANTS_H    // To make sure you don't declare the function more than once by including the header multiple times.
+#define PARTICIPANTS_H
+
+#include <Arduino.h>
+
+/**
+ * The two parctipants in the app.
+ * Change names to your need here
+**/
+enum Participants {
+    max,
+    mustermann
+};
+
+/**
+ * Resolve the names to strings. Also change the names here.
+ * These returned string are the ones displayed on the epaper.
+**/
+inline const char* ParticipantAsString(Participants v)
+{
+    // thx to https://stackoverflow.com/a/5094430
+    switch (v)
+    {
+        case max:   return "Max";
+        case mustermann:   return "Mustermann";
+        default:      return "";
+    }
+}
+
+#endif
