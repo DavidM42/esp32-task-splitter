@@ -13,20 +13,6 @@ void Dates::setup(int timezone_offset)
     DateTimeParts p = DateTime.getParts();
     today_relative_to_day = p.getMonthDay();
     today_relative_to_month = p.getMonth();
-    display_update_needed = false;
-}
-
-boolean Dates::needs_to_update_display()
-{
-    DateTimeParts p = DateTime.getParts();
-
-    // if day or month does not match the day changed and display info is not relative to correct info anymore
-    if (today_relative_to_day != p.getMonthDay() || today_relative_to_month != p.getMonth()) {
-        today_relative_to_day = p.getMonthDay();
-        today_relative_to_month = p.getMonth();
-        display_update_needed = true;
-    }
-    return display_update_needed;
 }
 
 
@@ -93,4 +79,12 @@ String Dates::now_formatted()
 time_t Dates::now_timestamp()
 {
     return DateTime.getTime();
+}
+
+uint64_t Dates::seconds_until_tomorrow()
+{
+    const time_t now = DateTime.getTime();
+    DateTimeParts today_time_parts = DateTimeParts::from(now);
+    const time_t seconds_elapsed_today = (((today_time_parts.getHours() * 60) + today_time_parts.getMinutes()) * 60);
+    return (seconds_in_day - seconds_elapsed_today);
 }

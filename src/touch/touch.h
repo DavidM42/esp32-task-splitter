@@ -5,18 +5,21 @@
 
 #include "../vibration/vibration.h"
 
+/**
+ * All the pins used for touching
+**/
+#define TOUCH_PIN_1 2
+#define TOUCH_PIN_2 4
+#define TOUCH_PIN_3 15
+
+/**
+ * Empirical value via testing
+*/
+#define TOUCH_THRESHOLD 15
+
 class Touch
 {
 private:
-    int TOUCH_1 = 2;
-    int TOUCH_2 = 4;
-    int TOUCH_3 = 15;
-
-    /**
-     * Empirical value via testing
-    */
-    uint16_t touch_threshold = 25;
-
     /**
      * Delay to wait after first positive.
      * To make sure it's not a false positive repeat reading after time

@@ -17,26 +17,18 @@ private:
     const char* dt_string_fmt = "%e %h %R";  // e.g. " 7 Apr 17:57"
     const char* time_only_string_fmt = " %R";  // e.g. " 17:57"
 
+    const time_t seconds_in_day = 86400;
+
     int today_relative_to_day;
     int today_relative_to_month;
-    // const char* yesterday_relative_check_fmt = "%x"; // e.g. 08/23/01
-    // String yesterday_relative_to;
 
 public:
     // Time();
     // ~Time(); //destructor to close
 
-    boolean display_update_needed;
+    // boolean display_update_needed;
 
     void setup(int timezone_offset);
-
-    /**
-     * Check if day changed and today,yesterday,... not correct anymore.
-     * As side task also checks wether today_relative_to_day and today_relative_to_month needs to be updated (happens once after midnight every day).
-     * Only needed when device runs multiple days continiously because Screen would keep stating today then.
-     * On restart always new displayed also why today_relative_to_day and so on are not saved to flash.
-    **/
-    boolean needs_to_update_display();
 
     /**
      * Get current date and time in display ready format
@@ -67,6 +59,11 @@ public:
      * Get localized formatted date from local timestamp
     **/
     String format_timestamp_display_ready(time_t timestamp);
+
+    /**
+     * Give back seconds until tomorrow (so until midnight). Used by deepsleep timers
+    **/
+    uint64_t seconds_until_tomorrow();
 };
 
 #endif

@@ -8,6 +8,7 @@
 #include "./storage/storage.h"
 #include "./dates/dates.h"
 #include "./touch/touch.h"
+#include "./sleeping/sleeping.h"
 #include "./vibration/vibration.h"
 // TODO new error handling module
 // has method to receive error centrally displays on fresh epaper, serial print then shutdown esp
@@ -24,6 +25,7 @@ Storage storage;
 Vibration vibration;
 Display display;
 Dates dates;
+Sleeping sleeping;
 Touch touch;
 
 // by index just get both for use later
@@ -65,6 +67,69 @@ void update_screen_saved_values() {
     display.drawParticipantUpdate(last_saved_task_p, a_count, b_count, a_formatted_time, b_formatted_time);
 }
 
+void participant_A_triggered_callback() {
+    // short feedback that it worked
+    vibration.short_vibration();
+
+    // new values and save them
+    int newCount = storage.get_participant_count(participant_A) + 1;
+    uint32_t newTimestamp = dates.now_timestamp();
+    String newFormattedTime = dates.now_formatted();
+    storage.save_participant_data(participant_A, newCount, newTimestamp);
+
+    // get rest of values to draw
+    String b_formatted_time = dates.format_timestamp_display_ready(storage.get_participant_timestamp(participant_B));
+    int b_count =  storage.get_participant_count(participant_B);
+    Participants last_saved_task_p = participant_A;
+    // could also get from storage but directly assigning works too
+    // Participants last_saved_task_p = storage.get_last_task_done_participant();
+    
+    display.drawParticipantUpdate(last_saved_task_p, newCount, b_count, newFormattedTime, b_formatted_time);
+
+    Serial.println("----------------------");
+    Serial.print("David count now ");
+    Serial.println(newCount);
+    Serial.print("David new time: ");
+    Serial.println(newFormattedTime);
+}
+
+void participant_B_triggered_callback() {
+    // short feedback that it worked
+    vibration.short_vibration();
+
+    // new values and save them instantly
+    int newCount = storage.get_participant_count(participant_B) + 1;
+    uint32_t newTimestamp = dates.now_timestamp();
+    String newFormattedTime = dates.now_formatted();
+    storage.save_participant_data(participant_B, newCount, newTimestamp);
+
+    // get rest of values to draw
+    String a_formatted_time = dates.format_timestamp_display_ready(storage.get_participant_timestamp(participant_A));
+    int a_count =  storage.get_participant_count(participant_A);
+    Participants last_saved_task_p = participant_B;
+    // could also get from storage but directly assigning works too
+    // Participants last_saved_task_p = storage.get_last_task_done_participant();
+
+    display.drawParticipantUpdate(last_saved_task_p, a_count, newCount, a_formatted_time, newFormattedTime);
+
+    Serial.println("----------------------");
+    Serial.print("Niklas count now ");
+    Serial.println(newCount);
+    Serial.print("Niklas new time: ");
+    Serial.println(newFormattedTime);
+}
+
+void reset_triggered_callback() {
+    // short feedback that it worked
+    vibration.short_vibration();
+
+    // TODO more reset logic with reset display on epaper
+    Serial.println("Reset counts and timestamps");
+    storage.reset();
+    update_screen_saved_values();
+}
+
+
 void setup() {
     Serial.begin(115200);
     delay(2000); // give me time to bring up serial monitor
@@ -77,81 +142,30 @@ void setup() {
     dates.setup(timezone_offset);
     vibration.setup();
 
+    sleeping.setup();
+
     delay(300);
 
-    display.drawCenterText("Booted successfully...");
-    delay(300);
+    if (sleeping.was_woken_up_by_timer()) {
+        display.drawCenterText("Will update values to new day!");
+    } else {
+        display.drawCenterText("Booted successfully...");
+    }
+    delay(1000);
     update_screen_saved_values();
 
-    // TODO do after errors or action to sleep    
-    // shutdown();
+    // TODO 0/10 would not recommend
+    // endless bootloops with this and toucpad wakeup resets all the time
+    // not worth it for now
+    // don't want to brick my device or epaper display with that rn
+    // sleeping.deepsleep_start(dates,
+    //     participant_A_triggered_callback,
+    //     participant_B_triggered_callback,
+    //     reset_triggered_callback
+    // );
+
+    shutdown();
 }
 
 void loop() {
-    // touch.is_1_touched_w_feedback(vibration);
-    // touch.is_2_touched_w_feedback(vibration);
-    // touch.is_3_touched_w_feedback(vibration);
-    // delay(90);
-
-    // TODO not a main loop continously running but touch wakeups and deepsleep
-    // every time wakeup also calculate ms until after midnight is reached then set that as deepsleep wakeup timer too
-
-    if (touch.is_1_touched_w_feedback(vibration)) {
-        // new values and save them
-        int newCount = storage.get_participant_count(participant_A) + 1;
-        uint32_t newTimestamp = dates.now_timestamp();
-        String newFormattedTime = dates.now_formatted();
-        storage.save_participant_data(participant_A, newCount, newTimestamp);
-
-        // get rest of values to draw
-        String b_formatted_time = dates.format_timestamp_display_ready(storage.get_participant_timestamp(participant_B));
-        int b_count =  storage.get_participant_count(participant_B);
-        Participants last_saved_task_p = participant_A;
-        // could also get from storage but directly assigning works too
-        // Participants last_saved_task_p = storage.get_last_task_done_participant();
-        
-        display.drawParticipantUpdate(last_saved_task_p, newCount, b_count, newFormattedTime, b_formatted_time);
-
-        Serial.println("----------------------");
-        Serial.print("David count now ");
-        Serial.println(newCount);
-        Serial.print("David new time: ");
-        Serial.println(newFormattedTime);
-    } else if(touch.is_2_touched_w_feedback(vibration)) {
-        // new values and save them instantly
-        int newCount = storage.get_participant_count(participant_B) + 1;
-        uint32_t newTimestamp = dates.now_timestamp();
-        String newFormattedTime = dates.now_formatted();
-        storage.save_participant_data(participant_B, newCount, newTimestamp);
-
-        // get rest of values to draw
-        String a_formatted_time = dates.format_timestamp_display_ready(storage.get_participant_timestamp(participant_A));
-        int a_count =  storage.get_participant_count(participant_A);
-        Participants last_saved_task_p = participant_B;
-        // could also get from storage but directly assigning works too
-        // Participants last_saved_task_p = storage.get_last_task_done_participant();
-
-        display.drawParticipantUpdate(last_saved_task_p, a_count, newCount, a_formatted_time, newFormattedTime);
-
-        Serial.println("----------------------");
-        Serial.print("Niklas count now ");
-        Serial.println(newCount);
-        Serial.print("Niklas new time: ");
-        Serial.println(newFormattedTime);
-    } else if(touch.is_3_touched_w_feedback(vibration)) {
-        // TODO more reset logic with reset display on epaper
-        Serial.println("Reset counts and timestamps");
-        storage.reset();
-        update_screen_saved_values();
-    }
-    delay(80);
-
-    // would not need to be called so often but only every few minutes but whatever
-    if (dates.needs_to_update_display())
-    {
-        dates.display_update_needed = false;
-        display.drawCenterText("Will update values to new day!");
-        delay(2000);
-        update_screen_saved_values();
-    }
 }
