@@ -93,6 +93,9 @@ void loop() {
     // touch.is_3_touched_w_feedback(vibration);
     // delay(90);
 
+    // TODO not a main loop continously running but touch wakeups and deepsleep
+    // every time wakeup also calculate ms until after midnight is reached then set that as deepsleep wakeup timer too
+
     if (touch.is_1_touched_w_feedback(vibration)) {
         // new values and save them
         int newCount = storage.get_participant_count(participant_A) + 1;
