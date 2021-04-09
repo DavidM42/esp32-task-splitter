@@ -16,6 +16,7 @@ class Storage
 private:
 
     const char* namespace_name = "spuelen";
+    const char* backup_namespace_name = "backup-ns";
 
     // these keys can not be longer than certain length!!
     // else it will silently fail!!
@@ -34,16 +35,32 @@ private:
     **/
     void save_participant_timestamp(uint32_t timestamp, Participants participant);
 
+    /**
+     * Save who did last task
+    **/
+    void save_last_task_done_participant(Participants participant);
+
 public:
     // Storage();
     ~Storage(); //destructor to close
 
     void setup();
 
+
     /**
      * Clears all values from namespace (related to project)
     **/
     void reset();
+
+    /**
+     * backs up namespace into backup namespace
+    **/
+    void backup();
+
+    /**
+     * Restore data from backup namespace into normal one
+    **/
+    void restore();
 
     /**
      * Get count of participant from permanent storage
