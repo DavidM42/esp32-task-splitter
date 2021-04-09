@@ -1,6 +1,8 @@
 const char* ssid     = "XXXXXXXXXXX";
 const char* password = "XXXXXXXXXXX";
 
+const char* hostname = "tasks";
+
 #include <DateTimeTZ.h>
 // list of all possibilites here
 // https://github.com/mcxiaoke/ESPDateTime/blob/v1.0.3/src/DateTimeTZ.h
