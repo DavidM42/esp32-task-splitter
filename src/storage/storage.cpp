@@ -26,35 +26,27 @@ void Storage::reset()
 
 void Storage::save_participant_count(int count, Participants participant)
 {
-    // thx to https://stackoverflow.com/a/14632668
-    const char* participantString = ParticipantAsString(participant);
-    String combined_key( String(count_base_key) + participantString );
-
-    // Serial.println("Writing value");
+    // only stringify the index on enum so no problems with too long keys
+    String combined_key( String(count_base_key) + String(participant) );
     preferences.putInt(combined_key.c_str(), count);
 };
 
 int Storage::get_participant_count(Participants participant)
 {
-    const char* participantString = ParticipantAsString(participant);
-    String combined_key( String(count_base_key) + participantString );
+    String combined_key( String(count_base_key) + String(participant) );
     return preferences.getInt(combined_key.c_str());
 };
 
 
 void Storage::save_participant_timestamp(uint32_t timestamp, Participants participant)
 {
-    const char* participantString = ParticipantAsString(participant);
-    String combined_key( String(last_datetime_base_key) + participantString );
-
-    // Serial.println("Writing value");
+    String combined_key( String(last_datetime_base_key) + String(participant) );
     preferences.putInt(combined_key.c_str(), timestamp);
 };
 
 uint32_t Storage::get_participant_timestamp(Participants participant)
 {
-    const char* participantString = ParticipantAsString(participant);
-    String combined_key( String(last_datetime_base_key) + participantString );
+    String combined_key( String(last_datetime_base_key) + String(participant) );
     return preferences.getInt(combined_key.c_str());
 };
 
