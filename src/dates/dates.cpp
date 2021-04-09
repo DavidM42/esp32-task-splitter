@@ -4,6 +4,7 @@ void Dates::setup(int timezone_offset)
 {
     local_timezone = timezone_offset;   
     DateTime.setTimeZone(local_timezone);
+    DateTime.setServer("pool.ntp.org");
     DateTime.begin();
     if (!DateTime.isTimeValid()) {
         Serial.println("Failed to get time from server.");
@@ -55,8 +56,12 @@ boolean Dates::isDayBeforeYesterday(time_t timestamp)
 
 
 String Dates::format_timestamp_display_ready(time_t timestamp)
-{   
-    if (isToday(timestamp)) {
+{
+    if(timestamp <= 0) {
+        // not 1 Jan 1970 but better empty string
+        // more sane fallback for my use case
+        return "";
+    } else if (isToday(timestamp)) {
         // TODO localization
         String dateString = "Heute";
         String time = DateFormatter::format(time_only_string_fmt, timestamp, local_timezone);
@@ -74,10 +79,6 @@ String Dates::format_timestamp_display_ready(time_t timestamp)
         String time = DateFormatter::format(time_only_string_fmt, timestamp, local_timezone);
         dateString.concat(time);
         return dateString;
-    } else if(timestamp <= 0) {
-        // not 1 Jan 1970 but better empty string
-        // more sane fallback for my use case
-        return "";
     }
     // normal non yesterday or day before, soo longer time ago
     return DateFormatter::format(dt_string_fmt, timestamp, local_timezone);
