@@ -1,6 +1,7 @@
 const char* ssid     = "XXXXXXXXXXX";
 const char* password = "XXXXXXXXXXX";
 
-// gmt+2/utc+2 e.g. is 2 because 2 hours offset
-// utc-8 would be -8
-int timezone_offset = 2;
+#include <DateTimeTZ.h>
+// list of all possibilites here
+// https://github.com/mcxiaoke/ESPDateTime/blob/v1.0.3/src/DateTimeTZ.h
+const char* timezone = TZ_Europe_Berlin;

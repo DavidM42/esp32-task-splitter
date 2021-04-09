@@ -74,7 +74,7 @@ void setup() {
     // start modules 
     display.setup();
     storage.setup();
-    dates.setup(timezone_offset);
+    dates.setup(timezone);
     vibration.setup();
 
     delay(300);

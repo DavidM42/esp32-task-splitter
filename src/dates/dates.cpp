@@ -1,8 +1,8 @@
 #include "dates.h"
 
-void Dates::setup(int timezone_offset)
+void Dates::setup(const char* timezone)
 {
-    local_timezone = timezone_offset;   
+    local_timezone = timezone;   
     DateTime.setTimeZone(local_timezone);
     DateTime.setServer("pool.ntp.org");
     DateTime.begin();

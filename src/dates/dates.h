@@ -10,7 +10,7 @@
 class Dates
 {
 private:
-    int local_timezone;
+    const char* local_timezone;
 
     // format time to string, using strftime
     // http://www.cplusplus.com/reference/ctime/strftime/
@@ -28,7 +28,7 @@ public:
 
     boolean display_update_needed;
 
-    void setup(int timezone_offset);
+    void setup(const char* timezone);
 
     /**
      * Check if day changed and today,yesterday,... not correct anymore.
