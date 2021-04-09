@@ -8,8 +8,8 @@
 class Touch
 {
 private:
-    int TOUCH_1 = 2;
-    int TOUCH_2 = 4;
+    int TOUCH_1 = 4;
+    int TOUCH_2 = 2;
     int TOUCH_3 = 15;
 
     /**
