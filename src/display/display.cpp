@@ -177,8 +177,10 @@ void Display::drawParticipantUpdate(Participants last_saved_task_p,
     Participants part_B = (Participants)1;
 
     // for now default fallback to me to catch blame but preferred no fallback
-    Participants task_assigned_p = part_A;
-    if (count_A < count_B) {
+    Participants task_assigned_p = part_B;
+    if (count_A == 0 && count_B == 0) {
+        task_assigned_p = part_B;
+    } else if (count_A < count_B) {
         task_assigned_p = part_A;
     } else if (count_B < count_A) {
         task_assigned_p = part_B;
