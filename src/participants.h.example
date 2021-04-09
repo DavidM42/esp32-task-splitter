@@ -8,8 +8,8 @@
  * Change names to your need here
 **/
 enum Participants {
-    max,
-    mustermann
+    participant_a,
+    participant_b
 };
 
 /**
@@ -21,8 +21,8 @@ inline const char* ParticipantAsString(Participants v)
     // thx to https://stackoverflow.com/a/5094430
     switch (v)
     {
-        case max:   return "Max";
-        case mustermann:   return "Mustermann";
+        case participant_a:   return "Max";
+        case participant_b:   return "Mustermann";
         default:      return "";
     }
 }
